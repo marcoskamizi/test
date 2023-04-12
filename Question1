@@ -1,0 +1,66 @@
+enum State {
+  STATE_OFF,
+  STATE_ON,
+  STATE_PROTECTED
+};
+
+const int pinButton = 2;
+unsigned long elapsedTime = 0;
+volatile State buttonState = STATE_OFF; // Initialize state button
+unsigned long buttonPressTime;
+
+void setup() {
+  pinMode(pinButton, INPUT);
+  digitalWrite(pinButton, HIGH);
+  Serial.begin(9600); // just to see the feedback
+}
+
+void loop() {
+
+  if (digitalRead(pinButton) == LOW) { //Call the function when the button is pressed
+    timeCounter();
+  }
+  
+  //Bebounce and validate the state of the button to STATE_ON
+  if (elapsedTime<=200 && elapsedTime>=40 && buttonState == STATE_OFF){ 
+    buttonState = STATE_ON;
+  }
+
+  //Validate the actual state and time press to go next state -> STATE_PROTECTED
+  if (buttonState == STATE_ON && elapsedTime>=1500){
+    buttonState = STATE_PROTECTED;
+    buttonPressTime = millis();
+  }
+  
+  //Bebounce and check the time elapsed regarding 10s to the next stage -> STATE_OFF
+  if (elapsedTime<200 && elapsedTime>40 && buttonState == STATE_PROTECTED && (millis() - buttonPressTime) >= 10000 ){
+ 	buttonState = STATE_OFF;
+  }
+
+  //All serial prints are used for seeing feedback and can be commented on after tests.
+  //Serial.print("Tempo decorrido (ms): ");
+  //Serial.println(elapsedTime);
+  Serial.print("Button State: ");
+  switch (buttonState) {
+    case STATE_OFF:
+      Serial.println("OFF");
+      break;
+    case STATE_ON:
+      Serial.println("ON");
+      break;
+    case STATE_PROTECTED:
+      Serial.println("PROTECTED");
+      break;
+  }
+  
+  elapsedTime = 0;
+    
+}
+
+//Function to detect and count time press button
+void timeCounter() {
+  unsigned long tempoInicio = millis();
+  while (digitalRead(pinButton) == LOW) {
+    elapsedTime = millis() - tempoInicio;
+  }
+}
