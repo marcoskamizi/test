@@ -1,0 +1,63 @@
+#include <stdio.h>
+
+int main() {
+    int matriz[] = {5, 2, 8, 13, 7, 10, 4, 9};
+    int n = sizeof(matriz) / sizeof(matriz[0]);
+    int media, maximo, minimo;
+    int matrizPares[n];
+    int tamanhoMatrizPares;
+
+    calcMatriz(matriz, n, &media, &maximo, &minimo, matrizPares, &tamanhoMatrizPares);
+
+    printf("matriz original: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", matriz[i]);
+    }
+    printf("\n");
+
+    printf("media (inteiro): %d\n", media);
+    printf("maximo: %d\n", maximo);
+    printf("minimo: %d\n", minimo);
+    printf("Matriz de numeros pares: ");
+    for (int i = 0; i < tamanhoMatrizPares; i++) {
+        printf("%d ", matrizPares[i]);
+    }
+    printf("\n");
+    printf("Tamanho da matriz de numeros pares: %d\n", tamanhoMatrizPares);
+    return 0;
+}
+
+void calcMatriz(int matriz[], int n, int *media, int *maximo, int *minimo, int matrizPares[], int *tamanhoMatrizPares) {
+    // Inicializa as variáveis de média, máximo e mínimo com o primeiro elemento da matriz
+    *media = matriz[0];
+    *maximo = matriz[0];
+    *minimo = matriz[0];
+
+    // Inicializa o contador de números pares
+    *tamanhoMatrizPares = 0;
+
+    // Percorre a matriz para calcular média, máximo, mínimo e copiar números pares
+    for (int i = 0; i < n; i++) {
+        //Soma pra fazer a Média
+        *media += matriz[i];
+
+        //Máximo
+        if (matriz[i] > *maximo) {
+            *maximo = matriz[i];
+        }
+
+        //Mínimo
+        if (matriz[i] < *minimo) {
+            *minimo = matriz[i];
+        }
+
+        //Se é par
+        if (matriz[i] % 2 == 0) {
+            // Copia o número par para a matriz de pares
+            matrizPares[*tamanhoMatrizPares] = matriz[i];
+            (*tamanhoMatrizPares)++;
+        }
+    }
+    // Média
+    *media /= n;
+}
